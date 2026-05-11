@@ -33,6 +33,14 @@ spec:
                 access: proxy
                 url: http://prometheus-server.observability.svc.cluster.local
                 isDefault: true
+              - name: Loki
+                type: loki
+                access: proxy
+                url: http://loki.observability.svc.cluster.local:3100
+              - name: Jaeger
+                type: jaeger
+                access: proxy
+                url: http://jaeger-query.observability.svc.cluster.local:16686
   destination:
     server: https://kubernetes.default.svc
     namespace: observability
