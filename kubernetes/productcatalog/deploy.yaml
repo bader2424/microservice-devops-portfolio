@@ -31,7 +31,7 @@ spec:
       serviceAccountName: opentelemetry-demo
       containers:
         - name: productcatalogservice
-          image: ghcr.io/bader2424/microservice-devops-portfolio/product-catalog:c644a992fba7
+          image: ghcr.io/bader2424/microservice-devops-portfolio/product-catalog:d9b894676b60
           imagePullPolicy: IfNotPresent
           ports:
             
