@@ -69,7 +69,6 @@ jobs:
           vuln-type: os,library
       - name: Upload image scan SARIF
         uses: github/codeql-action/upload-sarif@v3
-        if: always()
         with:
           sarif_file: trivy-image.sarif
 
@@ -87,7 +86,7 @@ jobs:
       - name: Validate Kubernetes manifests
         run: |
           kubeconform -strict -summary -ignore-missing-schemas \
-            kubernetes gitops/jaeger gitops/otel-collector gitops/cluster-autoscaler gitops/metrics-server
+            kubernetes gitops/apps gitops/jaeger gitops/otel-collector gitops/cluster-autoscaler
       - name: Scan repo with Trivy
         uses: aquasecurity/trivy-action@v0.35.0
         with:
@@ -100,7 +99,6 @@ jobs:
           ignore-unfixed: true
       - name: Upload repo scan SARIF
         uses: github/codeql-action/upload-sarif@v3
-        if: always()
         with:
           sarif_file: trivy-repo.sarif
       - name: Gitleaks secret scan
