@@ -11,6 +11,7 @@ spec:
     path: kubernetes
     directory:
       recurse: true
+      exclude: complete-deploy.yaml
   destination:
     server: https://kubernetes.default.svc
     namespace: otel-demo
