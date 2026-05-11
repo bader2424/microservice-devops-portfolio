@@ -7,8 +7,10 @@ spec:
   project: default
   source:
     repoURL: https://github.com/bader2424/microservice-devops-portfolio.git
-    targetRevision: main
-    path: gitops/otel-demo
+    targetRevision: gitops-bader-clean
+    path: kubernetes
+    directory:
+      recurse: true
   destination:
     server: https://kubernetes.default.svc
     namespace: otel-demo
