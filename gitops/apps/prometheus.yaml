@@ -1,0 +1,41 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: prometheus
+  namespace: argocd
+spec:
+  project: default
+  source:
+    repoURL: https://prometheus-community.github.io/helm-charts
+    chart: prometheus
+    targetRevision: "29.6.0"
+    helm:
+      values: |
+        alertmanager:
+          enabled: false
+        prometheus-pushgateway:
+          enabled: false
+        prometheus-node-exporter:
+          enabled: false
+        kube-state-metrics:
+          enabled: true
+        server:
+          persistentVolume:
+            enabled: false
+          retention: 6h
+          resources:
+            requests:
+              cpu: 100m
+              memory: 350Mi
+            limits:
+              cpu: 500m
+              memory: 800Mi
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: observability
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true
