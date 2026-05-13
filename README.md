@@ -4,8 +4,6 @@ Production-style DevOps portfolio based on the OpenTelemetry Astronomy Shop demo
 
 This repository started as a fork of the open-source `opentelemetry-demo`, then I extended it into an end-to-end cloud DevOps project. The application is a realistic microservice e-commerce system, and the project demonstrates how to run it locally with Docker and deploy it to AWS using Terraform, EKS, Kubernetes, Argo CD, CI/CD, DevSecOps, and observability tooling.
 
-> Note: the full DevOps implementation is on the `gitops-bader-clean` branch. If you are viewing the `main` branch before that branch is merged, check out `gitops-bader-clean` to see the Terraform, GitOps, CI/CD, autoscaling, and observability files.
-
 ## What I Built
 
 - Deployed the full microservice application to AWS EKS.
@@ -89,7 +87,6 @@ Start the application:
 ```bash
 git clone https://github.com/bader2424/microservice-devops-portfolio.git
 cd microservice-devops-portfolio
-git checkout gitops-bader-clean
 docker compose up --force-recreate --remove-orphans --detach
 ```
 
