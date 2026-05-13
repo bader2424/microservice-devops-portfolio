@@ -1,0 +1,51 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+namespace: otel-demo
+resources:
+  - ../../kubernetes/serviceaccount.yaml
+  - ../../kubernetes/accounting/deploy.yaml
+  - ../../kubernetes/ad/deploy.yaml
+  - ../../kubernetes/ad/svc.yaml
+  - ../../kubernetes/cart/deploy.yaml
+  - ../../kubernetes/cart/svc.yaml
+  - ../../kubernetes/checkout/deploy.yaml
+  - ../../kubernetes/checkout/svc.yaml
+  - ../../kubernetes/currency/deploy.yaml
+  - ../../kubernetes/currency/svc.yaml
+  - ../../kubernetes/email/deploy.yaml
+  - ../../kubernetes/email/svc.yaml
+  - ../../kubernetes/flagd/cm.yaml
+  - ../../kubernetes/flagd/deploy.yaml
+  - ../../kubernetes/flagd/svc.yaml
+  - ../../kubernetes/frauddetection/deploy.yaml
+  - ../../kubernetes/frontend/deploy.yaml
+  - ../../kubernetes/frontend/svc.yaml
+  - ../../kubernetes/frontendproxy/deploy.yaml
+  - ../../kubernetes/frontendproxy/ingress.yaml
+  - ../../kubernetes/frontendproxy/svc.yaml
+  - ../../kubernetes/imageprovider/deploy.yaml
+  - ../../kubernetes/imageprovider/svc.yaml
+  - ../../kubernetes/kafka/deploy.yaml
+  - ../../kubernetes/kafka/svc.yaml
+  - ../../kubernetes/loadgenerator/deploy.yaml
+  - ../../kubernetes/loadgenerator/svc.yaml
+  - ../../kubernetes/payment/deploy.yaml
+  - ../../kubernetes/payment/svc.yaml
+  - ../../kubernetes/productcatalog/deploy.yaml
+  - ../../kubernetes/productcatalog/svc.yaml
+  - ../../kubernetes/quote/deploy.yaml
+  - ../../kubernetes/quote/svc.yaml
+  - ../../kubernetes/recommendation/deploy.yaml
+  - ../../kubernetes/recommendation/svc.yaml
+  - ../../kubernetes/shipping/deploy.yaml
+  - ../../kubernetes/shipping/svc.yaml
+  - ../../kubernetes/valkey/deploy.yaml
+  - ../../kubernetes/valkey/svc.yaml
+
+patches:
+  - target:
+      kind: Ingress
+      name: frontend-proxy
+    patch: |-
+      - op: remove
+        path: /spec/rules/0/host

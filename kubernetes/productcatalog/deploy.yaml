@@ -31,11 +31,11 @@ spec:
       serviceAccountName: opentelemetry-demo
       containers:
         - name: productcatalogservice
-          image: abhishekf5/product-catalog:13134113508
+          image: ghcr.io/bader2424/microservice-devops-portfolio/product-catalog:d9b894676b60
           imagePullPolicy: IfNotPresent
           ports:
             
-            - containerPort: 8080
+            - containerPort: 8088
               name: service
           env:
             - name: OTEL_SERVICE_NAME
@@ -48,7 +48,7 @@ spec:
             - name: OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE
               value: cumulative
             - name: PRODUCT_CATALOG_SERVICE_PORT
-              value: "8080"
+              value: "8088"
             - name: FLAGD_HOST
               value: 'opentelemetry-demo-flagd'
             - name: FLAGD_PORT
@@ -58,7 +58,11 @@ spec:
             - name: OTEL_RESOURCE_ATTRIBUTES
               value: service.name=$(OTEL_SERVICE_NAME),service.namespace=opentelemetry-demo,service.version=1.12.0
           resources:
-            limits:
+            requests:
+              cpu: 25m
               memory: 20Mi
+            limits:
+              cpu: 200m
+              memory: 128Mi
           volumeMounts:
       volumes:

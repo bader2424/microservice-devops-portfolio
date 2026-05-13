@@ -1,0 +1,94 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: opentelemetry-demo-otelcol
+  namespace: otel-demo
+data:
+  otelcol-config.yaml: |
+    receivers:
+      otlp:
+        protocols:
+          grpc:
+            endpoint: 0.0.0.0:4317
+          http:
+            endpoint: 0.0.0.0:4318
+
+    processors:
+      batch: {}
+
+    exporters:
+      otlp/jaeger:
+        endpoint: jaeger-collector.observability.svc.cluster.local:4317
+        tls:
+          insecure: true
+      debug:
+        verbosity: basic
+
+    service:
+      pipelines:
+        traces:
+          receivers: [otlp]
+          processors: [batch]
+          exporters: [otlp/jaeger]
+        metrics:
+          receivers: [otlp]
+          processors: [batch]
+          exporters: [debug]
+        logs:
+          receivers: [otlp]
+          processors: [batch]
+          exporters: [debug]
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: opentelemetry-demo-otelcol
+  namespace: otel-demo
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: opentelemetry-demo-otelcol
+  template:
+    metadata:
+      labels:
+        app: opentelemetry-demo-otelcol
+    spec:
+      containers:
+        - name: otelcol
+          image: otel/opentelemetry-collector-contrib:0.104.0
+          args:
+            - --config=/conf/otelcol-config.yaml
+          ports:
+            - containerPort: 4317
+            - containerPort: 4318
+          volumeMounts:
+            - name: config
+              mountPath: /conf
+          resources:
+            requests:
+              cpu: 100m
+              memory: 128Mi
+            limits:
+              cpu: 300m
+              memory: 512Mi
+      volumes:
+        - name: config
+          configMap:
+            name: opentelemetry-demo-otelcol
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: opentelemetry-demo-otelcol
+  namespace: otel-demo
+spec:
+  selector:
+    app: opentelemetry-demo-otelcol
+  ports:
+    - name: otlp-grpc
+      port: 4317
+      targetPort: 4317
+    - name: otlp-http
+      port: 4318
+      targetPort: 4318

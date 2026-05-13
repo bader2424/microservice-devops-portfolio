@@ -54,3 +54,13 @@ test/tracetesting/tracetesting-vars.yaml
 *.apk
 
 !src/currency/build
+
+# Terraform local/generated files
+**/.terraform/
+**/.terraform.lock.hcl
+**/terraform.tfstate
+**/terraform.tfstate.*
+**/tfplan
+**/tfplan.txt
+*.tfplan
+iam-policy.json
