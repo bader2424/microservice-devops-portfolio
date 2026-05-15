@@ -1,33 +1,34 @@
 # Microservice DevOps Portfolio
 
-Production-style DevOps portfolio based on the OpenTelemetry Astronomy Shop demo.
+A production-style DevOps portfolio project based on the OpenTelemetry Astronomy Shop demo.
 
-This repository started as a fork of the open-source `opentelemetry-demo`, then I extended it into an end-to-end cloud DevOps project. The application is a realistic microservice e-commerce system, and the project demonstrates how to run it locally with Docker and deploy it to AWS using Terraform, EKS, Kubernetes, Argo CD, CI/CD, DevSecOps, and observability tooling.
+This repository shows how a real microservice application can be containerized, deployed to AWS EKS, delivered with GitOps, secured with CI/CD checks, and monitored with observability tooling.
 
-## What I Built
+The original application is based on the open-source OpenTelemetry demo. I extended it with Terraform, AWS EKS, Kubernetes manifests, Argo CD, GitHub Actions, DevSecOps scanning, autoscaling, and cloud monitoring.
 
-- Deployed the full microservice application to AWS EKS.
-- Created AWS infrastructure with Terraform, including VPC, subnets, NAT gateway, EKS, managed node group, IAM integration, and ECR repositories.
-- Used Kubernetes Deployments, Services, Ingress, ServiceAccounts, and HPAs.
-- Exposed the application publicly through an AWS Application Load Balancer.
-- Implemented GitOps deployment with Argo CD using an app-of-apps structure.
-- Added GitHub Actions CI/CD for testing, image build, image scan, GHCR push, and manifest update.
-- Added DevSecOps checks with Trivy, Checkov, Gitleaks, and Kubernetes manifest validation.
-- Added observability with Prometheus, Grafana, Loki, Jaeger, OpenTelemetry Collector, and AWS CloudWatch.
-- Added Kubernetes HPA and Cluster Autoscaler manifests for scaling.
-- Added cost-control and cleanup practices for an AWS credits/free-tier style environment.
+## Highlights
+
+- Provisioned AWS infrastructure with Terraform
+- Deployed the full microservice application to Amazon EKS
+- Managed Kubernetes delivery with Argo CD GitOps
+- Exposed the app through an AWS Application Load Balancer
+- Added CI/CD automation with GitHub Actions and GHCR
+- Added DevSecOps checks with Trivy, Checkov, Gitleaks, and kubeconform
+- Added observability with Prometheus, Grafana, Loki, Jaeger, OpenTelemetry Collector, and CloudWatch
+- Added HPA and Cluster Autoscaler configuration
+- Included cleanup and cost-awareness practices for AWS environments
 
 ## Architecture
 
 ```text
 Developer
   -> GitHub
-  -> GitHub Actions CI/CD
+  -> GitHub Actions
   -> GitHub Container Registry
   -> GitOps manifest update
   -> Argo CD
   -> AWS EKS
-  -> Kubernetes Deployments / Services / Ingress
+  -> Kubernetes workloads
   -> AWS Application Load Balancer
   -> OpenTelemetry Demo application
 ```
@@ -35,16 +36,16 @@ Developer
 Runtime traffic:
 
 ```text
-User -> AWS ALB -> Kubernetes Ingress -> frontend-proxy Service -> frontend Pod -> backend microservices
+User -> AWS ALB -> Kubernetes Ingress -> frontend-proxy -> frontend -> backend microservices
 ```
 
-Observability:
+Observability flow:
 
 ```text
-Application Pods -> OpenTelemetry Collector -> Jaeger
-Kubernetes Metrics -> Prometheus -> Grafana
-Pod Logs -> Promtail -> Loki -> Grafana
-Cluster Logs/Metrics -> AWS CloudWatch
+Application telemetry -> OpenTelemetry Collector -> Jaeger
+Kubernetes metrics -> Prometheus -> Grafana
+Pod logs -> Promtail -> Loki -> Grafana
+Cluster metrics/logs -> AWS CloudWatch
 ```
 
 ## Tech Stack
@@ -54,35 +55,51 @@ Cluster Logs/Metrics -> AWS CloudWatch
 | Application | OpenTelemetry Astronomy Shop microservices |
 | Containers | Docker, Docker Compose |
 | Cloud | AWS, EKS, EC2, VPC, ALB, IAM, ECR, CloudWatch |
-| Infrastructure as Code | Terraform |
+| IaC | Terraform |
 | Kubernetes | Deployments, Services, Ingress, HPA, ServiceAccounts |
 | GitOps | Argo CD app-of-apps |
 | CI/CD | GitHub Actions, GHCR |
 | Security | Trivy, Checkov, Gitleaks, kubeconform |
 | Observability | Prometheus, Grafana, Loki, Jaeger, OpenTelemetry Collector |
-| Scaling | Kubernetes HPA, Cluster Autoscaler |
+| Scaling | HPA, Cluster Autoscaler |
+
+## Screenshots
+
+### Application Running on AWS
+
+![Application running on AWS ALB](docs/images/app-alb.png)
+
+### Argo CD GitOps Applications
+
+![Argo CD applications synced and healthy](docs/images/argocd-apps.png)
+
+### Kubernetes Workloads
+
+![Kubernetes pods running in EKS](docs/images/k8s-workloads.png)
+
+### CloudWatch Container Insights
+
+![CloudWatch Container Insights dashboard](docs/images/cloudwatch-container-insights.png)
 
 ## Repository Structure
 
 ```text
-.github/workflows/      GitHub Actions CI/CD and DevSecOps pipelines
+.github/workflows/      GitHub Actions CI/CD and DevSecOps workflows
 infra/terraform/        AWS infrastructure as code
-gitops/                 Argo CD app-of-apps and platform apps
+gitops/                 Argo CD root app and platform applications
 kubernetes/             Kubernetes manifests for the microservices
-src/                    Microservice source code and Dockerfiles
-scripts/                Local and AWS helper scripts
-docs/                   Project documentation and study guide
+src/                    Application source code and Dockerfiles
+scripts/                Helper scripts
+docs/images/            Project screenshots
 docker-compose.yml      Local full-stack deployment
 ```
 
-## Run Locally with Docker
+## Run Locally
 
 Requirements:
 
 - Docker
 - Docker Compose
-
-Start the application:
 
 ```bash
 git clone https://github.com/bader2424/microservice-devops-portfolio.git
@@ -90,13 +107,7 @@ cd microservice-devops-portfolio
 docker compose up --force-recreate --remove-orphans --detach
 ```
 
-Or use the helper script:
-
-```bash
-./scripts/local-up.sh
-```
-
-Open:
+Local URLs:
 
 ```text
 Application: http://localhost:8080
@@ -104,29 +115,23 @@ Grafana:     http://localhost:8080/grafana
 Jaeger:      http://localhost:8080/jaeger/ui
 ```
 
-Stop locally:
+Stop the local environment:
 
 ```bash
 docker compose down --remove-orphans
 ```
 
-## Deploy to AWS EKS with Terraform and Argo CD
+## AWS EKS Deployment
 
-Requirements:
+This project was deployed to AWS EKS using Terraform for infrastructure provisioning and Argo CD for GitOps delivery.
 
-- AWS CLI configured
-- Terraform
-- kubectl
-- Helm
-- Argo CD CLI optional
+High-level deployment flow:
 
-Verify AWS access:
-
-```bash
-aws sts get-caller-identity
+```text
+Terraform -> EKS -> Argo CD -> GitOps root app -> Platform apps + microservices
 ```
 
-Create infrastructure:
+Main commands:
 
 ```bash
 cd infra/terraform
@@ -134,103 +139,71 @@ terraform init
 terraform validate
 terraform plan -out tfplan
 terraform apply tfplan
-```
 
-Connect kubectl to EKS:
+aws eks update-kubeconfig --region us-east-1 --name bader-gitops-otel-demo-dev
 
-```bash
-aws eks update-kubeconfig \
-  --region us-east-1 \
-  --name bader-gitops-otel-demo-dev
-
-kubectl get nodes
-```
-
-Install Argo CD:
-
-```bash
-kubectl create namespace argocd --dry-run=client -o yaml | kubectl apply -f -
-kubectl apply -n argocd -f https://raw.githubusercontent.com/argoproj/argo-cd/stable/manifests/install.yaml
-kubectl wait --for=condition=available --timeout=300s deployment/argocd-server -n argocd
-```
-
-Deploy the GitOps root app:
-
-```bash
 kubectl apply -f gitops/root-app.yaml
 kubectl get applications -n argocd
-```
-
-Check the application:
-
-```bash
 kubectl get pods -n otel-demo
-kubectl get svc -n otel-demo
 kubectl get ingress -n otel-demo
 ```
 
-Open the public ALB address from:
-
-```bash
-kubectl get ingress -n otel-demo
-```
+The public application endpoint is exposed through the AWS Application Load Balancer created by the Kubernetes Ingress.
 
 ## CI/CD and DevSecOps
 
-The repository includes two main GitHub Actions workflows:
+The repository includes GitHub Actions workflows for build validation, security scanning, image publishing, and GitOps-based deployment.
 
-- `devsecops-ci`: runs Go checks, Docker build validation, Kubernetes manifest validation, Trivy scans, Gitleaks, Terraform validation, and Checkov.
-- `product-catalog-cd`: builds the Product Catalog image, scans it, pushes it to GHCR, updates the Kubernetes deployment image tag, and lets Argo CD deploy it.
-
-Delivery flow:
+Pipeline flow:
 
 ```text
-Code change -> GitHub Actions -> Docker image -> Security scan -> GHCR -> Manifest update -> Argo CD sync -> EKS rollout
+Code change
+  -> GitHub Actions
+  -> Build container image
+  -> Run security scans
+  -> Push image to GHCR
+  -> Update Kubernetes manifest
+  -> Argo CD syncs change to EKS
 ```
+
+Included checks:
+
+- Go checks and test validation
+- Docker image build validation
+- Kubernetes manifest validation
+- Terraform validation
+- Trivy vulnerability scanning
+- Gitleaks secret scanning
+- Checkov infrastructure scanning
 
 ## Observability
 
-The project includes:
+The project includes a full observability stack for metrics, logs, traces, and cloud-native monitoring.
 
-- Prometheus for metrics.
-- Grafana for dashboards.
-- Loki and Promtail for logs.
-- Jaeger for distributed tracing.
-- OpenTelemetry Collector for telemetry routing.
-- AWS CloudWatch for AWS-native cluster logs and metrics.
-
-Useful checks:
-
-```bash
-kubectl get pods -n observability
-kubectl port-forward svc/grafana -n observability 3000:80
-kubectl port-forward svc/prometheus-server -n observability 9090:80
-kubectl port-forward svc/jaeger-query -n observability 16686:16686
-```
+- Prometheus for metrics
+- Grafana for dashboards
+- Loki and Promtail for logs
+- Jaeger for distributed tracing
+- OpenTelemetry Collector for telemetry routing
+- AWS CloudWatch Container Insights for EKS visibility
 
 ## Cleanup
 
-AWS resources can cost money. Destroy the infrastructure when the demo is finished:
+AWS resources can generate cost. Destroy the environment when testing is finished:
 
 ```bash
 cd infra/terraform
 terraform destroy
 ```
 
-Also confirm that load balancers, EBS volumes, NAT gateways, and CloudWatch log retention are cleaned up.
+After cleanup, confirm that load balancers, NAT gateways, EBS volumes, ECR images, and CloudWatch log groups are removed if no longer needed.
 
 ## Project Status
 
-This is a portfolio project designed to demonstrate real DevOps skills:
+This is a portfolio project built to demonstrate practical DevOps and cloud engineering skills across AWS infrastructure, Kubernetes, GitOps, CI/CD, security scanning, observability, autoscaling, and cloud cost awareness.
 
-- Cloud infrastructure provisioning
-- Kubernetes deployment
-- GitOps delivery
-- CI/CD automation
-- DevSecOps scanning
-- Observability
-- Autoscaling
-- Troubleshooting
-- AWS cost awareness
+## Attribution
 
-The application source is based on the OpenTelemetry Astronomy Shop demo. The DevOps platform, AWS deployment, GitOps structure, CI/CD, security scanning, and observability work were added as part of this portfolio.
+The application source is based on the OpenTelemetry Astronomy Shop demo.
+
+The DevOps platform work in this repository, including AWS infrastructure, Terraform configuration, Kubernetes deployment structure, GitOps setup, CI/CD workflows, security scanning, observability integration, and cleanup practices, was added as part of this portfolio project.
