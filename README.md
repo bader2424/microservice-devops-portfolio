@@ -73,9 +73,6 @@ Cluster metrics/logs -> AWS CloudWatch
 
 ![Argo CD applications synced and healthy](docs/images/argocd-apps.png)
 
-### Kubernetes Workloads
-
-![Kubernetes pods running in EKS](docs/images/k8s-workloads.png)
 
 ## Repository Structure
 
