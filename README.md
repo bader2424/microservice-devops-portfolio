@@ -77,10 +77,6 @@ Cluster metrics/logs -> AWS CloudWatch
 
 ![Kubernetes pods running in EKS](docs/images/k8s-workloads.png)
 
-### CloudWatch Container Insights
-
-![CloudWatch Container Insights dashboard](docs/images/cloudwatch-container-insights.png)
-
 ## Repository Structure
 
 ```text
